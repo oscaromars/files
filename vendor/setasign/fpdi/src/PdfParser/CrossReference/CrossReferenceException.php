@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -14,6 +13,8 @@ use setasign\Fpdi\PdfParser\PdfParserException;
 
 /**
  * Exception used by the CrossReference and Reader classes.
+ *
+ * @package setasign\Fpdi\PdfParser\CrossReference
  */
 class CrossReferenceException extends PdfParserException
 {

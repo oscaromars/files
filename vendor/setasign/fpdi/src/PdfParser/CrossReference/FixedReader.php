@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -18,6 +17,8 @@ use setasign\Fpdi\PdfParser\StreamReader;
  *
  * This reader allows a very less overhead parsing of single entries of the cross-reference, because the main entries
  * are only read when needed and not in a single run.
+ *
+ * @package setasign\Fpdi\PdfParser\CrossReference
  */
 class FixedReader extends AbstractReader implements ReaderInterface
 {
@@ -62,10 +63,6 @@ class FixedReader extends AbstractReader implements ReaderInterface
     public function getOffsetFor($objectNumber)
     {
         foreach ($this->subSections as $offset => list($startObject, $objectCount)) {
-            /**
-             * @var int $startObject
-             * @var int $objectCount
-             */
             if ($objectNumber >= $startObject && $objectNumber < ($startObject + $objectCount)) {
                 $position = $offset + 20 * ($objectNumber - $startObject);
                 $this->reader->ensure($position, 20);

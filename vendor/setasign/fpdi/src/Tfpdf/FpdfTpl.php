@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -16,6 +15,8 @@ use setasign\Fpdi\FpdfTplTrait;
  * Class FpdfTpl
  *
  * We need to change some access levels and implement the setPageFormat() method to bring back compatibility to tFPDF.
+ *
+ * @package setasign\Fpdi\Tfpdf
  */
 class FpdfTpl extends \tFPDF
 {

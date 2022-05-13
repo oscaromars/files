@@ -41,12 +41,6 @@ abstract class ErrorHandler extends Component
      * @var \Exception|null the exception that is being handled currently.
      */
     public $exception;
-    /**
-     * @var bool if true - `handleException()` will finish script with `ExitCode::OK`.
-     * false - `ExitCode::UNSPECIFIED_ERROR`.
-     * @since 2.0.36
-     */
-    public $silentExitOnException;
 
     /**
      * @var string Used to reserve memory for fatal error handler.
@@ -61,12 +55,6 @@ abstract class ErrorHandler extends Component
      */
     private $_registered = false;
 
-
-    public function init()
-    {
-        $this->silentExitOnException = $this->silentExitOnException !== null ? $this->silentExitOnException : YII_ENV_TEST;
-        parent::init();
-    }
 
     /**
      * Register this error handler.
@@ -133,7 +121,7 @@ abstract class ErrorHandler extends Component
                 $this->clearOutput();
             }
             $this->renderException($exception);
-            if (!$this->silentExitOnException) {
+            if (!YII_ENV_TEST) {
                 \Yii::getLogger()->flush(true);
                 if (defined('HHVM_VERSION')) {
                     flush();
@@ -298,7 +286,7 @@ abstract class ErrorHandler extends Component
 
     /**
      * Renders the exception.
-     * @param \Exception|\Error|\Throwable $exception the exception to be rendered.
+     * @param \Exception $exception the exception to be rendered.
      */
     abstract protected function renderException($exception);
 
@@ -336,7 +324,7 @@ abstract class ErrorHandler extends Component
      *
      * This method can be used to convert exceptions inside of methods like `__toString()`
      * to PHP errors because exceptions cannot be thrown inside of them.
-     * @param \Exception|\Throwable $exception the exception to convert to a PHP error.
+     * @param \Exception $exception the exception to convert to a PHP error.
      */
     public static function convertExceptionToError($exception)
     {
@@ -345,7 +333,7 @@ abstract class ErrorHandler extends Component
 
     /**
      * Converts an exception into a simple string.
-     * @param \Exception|\Error|\Throwable $exception the exception being converted
+     * @param \Exception|\Error $exception the exception being converted
      * @return string the string representation of the exception.
      */
     public static function convertExceptionToString($exception)
@@ -363,7 +351,7 @@ abstract class ErrorHandler extends Component
 
     /**
      * Converts an exception into a string that has verbose information about the exception and its trace.
-     * @param \Exception|\Error|\Throwable $exception the exception being converted
+     * @param \Exception|\Error $exception the exception being converted
      * @return string the string representation of the exception.
      *
      * @since 2.0.14

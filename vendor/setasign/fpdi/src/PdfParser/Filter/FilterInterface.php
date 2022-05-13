@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser\Filter;
 
 /**
  * Interface for filters
+ *
+ * @package setasign\Fpdi\PdfParser\Filter
  */
 interface FilterInterface
 {

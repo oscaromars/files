@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser\Filter;
 
 /**
  * Exception for Ascii85 filter class
+ *
+ * @package setasign\Fpdi\PdfParser\Filter
  */
 class Ascii85Exception extends FilterException
 {

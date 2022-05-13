@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -14,6 +13,8 @@ use setasign\Fpdi\PdfParser\StreamReader;
 
 /**
  * Class representing a hexadecimal encoded PDF string object
+ *
+ * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfHexString extends PdfType
 {
@@ -27,6 +28,10 @@ class PdfHexString extends PdfType
     {
         $bufferOffset = $streamReader->getOffset();
 
+        /**
+         * @var string $buffer
+         * @var int $pos
+         */
         while (true) {
             $buffer = $streamReader->getBuffer(false);
             $pos = \strpos($buffer, '>', $bufferOffset);
@@ -43,7 +48,7 @@ class PdfHexString extends PdfType
         $result = \substr($buffer, $bufferOffset, $pos - $bufferOffset);
         $streamReader->setOffset($pos + 1);
 
-        $v = new self();
+        $v = new self;
         $v->value = $result;
 
         return $v;
@@ -57,7 +62,7 @@ class PdfHexString extends PdfType
      */
     public static function create($string)
     {
-        $v = new self();
+        $v = new self;
         $v->value = $string;
 
         return $v;

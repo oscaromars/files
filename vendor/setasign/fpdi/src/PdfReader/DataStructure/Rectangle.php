@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -20,6 +19,8 @@ use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 
 /**
  * Class representing a rectangle
+ *
+ * @package setasign\Fpdi\PdfReader\DataStructure
  */
 class Rectangle
 {

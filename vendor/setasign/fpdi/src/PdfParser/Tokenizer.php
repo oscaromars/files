@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser;
 
 /**
  * A tokenizer class.
+ *
+ * @package setasign\Fpdi\PdfParser
  */
 class Tokenizer
 {
@@ -81,7 +82,13 @@ class Tokenizer
             return false;
         }
 
-        if (\in_array($byte, ["\x20", "\x0A", "\x0D", "\x0C", "\x09", "\x00"], true)) {
+        if ($byte === "\x20" ||
+            $byte === "\x0A" ||
+            $byte === "\x0D" ||
+            $byte === "\x0C" ||
+            $byte === "\x09" ||
+            $byte === "\x00"
+        ) {
             if ($this->leapWhiteSpaces() === false) {
                 return false;
             }

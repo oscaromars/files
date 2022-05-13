@@ -1,7 +1,7 @@
 {
     "name": "symfony/dom-crawler",
     "type": "library",
-    "description": "Eases DOM navigation for HTML and XML documents",
+    "description": "Symfony DomCrawler Component",
     "keywords": [],
     "homepage": "https://symfony.com",
     "license": "MIT",
@@ -36,5 +36,10 @@
             "/Tests/"
         ]
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "extra": {
+        "branch-alias": {
+            "dev-master": "4.4-dev"
+        }
+    }
 }

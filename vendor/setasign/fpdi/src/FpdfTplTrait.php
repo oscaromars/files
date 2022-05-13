@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -14,6 +13,8 @@ namespace setasign\Fpdi;
  * Trait FpdfTplTrait
  *
  * This class adds a templating feature to tFPDF.
+ *
+ * @package setasign\Fpdi
  */
 trait FpdfTplTrait
 {
@@ -60,8 +61,7 @@ trait FpdfTplTrait
 
         $size = $this->_getpagesize($size);
 
-        if (
-            $orientation != $this->CurOrientation
+        if ($orientation != $this->CurOrientation
             || $size[0] != $this->CurPageSize[0]
             || $size[1] != $this->CurPageSize[1]
         ) {
@@ -109,7 +109,7 @@ trait FpdfTplTrait
             unset($x['tpl']);
             \extract($x, EXTR_IF_EXISTS);
             /** @noinspection NotOptimalIfConditionsInspection */
-            /** @noinspection PhpConditionAlreadyCheckedInspection */
+            /** @noinspection CallableParameterUseCaseInTypeContextInspection */
             if (\is_array($x)) {
                 $x = 0;
             }
@@ -266,7 +266,7 @@ trait FpdfTplTrait
      */
     public function endTemplate()
     {
-        if ($this->currentTemplateId === null) {
+        if (null === $this->currentTemplateId) {
             return false;
         }
 
@@ -418,11 +418,7 @@ trait FpdfTplTrait
             $this->templates[$key]['objectNumber'] = $this->n;
 
             $this->_put('<</Type /XObject /Subtype /Form /FormType 1');
-            $this->_put(\sprintf(
-                '/BBox[0 0 %.2F %.2F]',
-                $template['width'] * $this->k,
-                $template['height'] * $this->k
-            ));
+            $this->_put(\sprintf('/BBox[0 0 %.2F %.2F]', $template['width'] * $this->k, $template['height'] * $this->k));
             $this->_put('/Resources 2 0 R'); // default resources dictionary of FPDF
 
             if ($this->compress) {

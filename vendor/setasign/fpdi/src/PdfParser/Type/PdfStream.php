@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -23,6 +22,8 @@ use setasign\FpdiPdfParser\PdfParser\Filter\Predictor;
 
 /**
  * Class representing a PDF stream object
+ *
+ * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfStream extends PdfType
 {
@@ -37,7 +38,7 @@ class PdfStream extends PdfType
      */
     public static function parse(PdfDictionary $dictionary, StreamReader $reader, PdfParser $parser = null)
     {
-        $v = new self();
+        $v = new self;
         $v->value = $dictionary;
         $v->reader = $reader;
         $v->parser = $parser;
@@ -53,7 +54,7 @@ class PdfStream extends PdfType
             }
         }
 
-        if ($firstByte === false) {
+        if (false === $firstByte) {
             throw new PdfTypeException(
                 'Unable to parse stream data. No newline after the stream keyword found.',
                 PdfTypeException::NO_NEWLINE_AFTER_STREAM_KEYWORD
@@ -85,7 +86,7 @@ class PdfStream extends PdfType
      */
     public static function create(PdfDictionary $dictionary, $stream)
     {
-        $v = new self();
+        $v = new self;
         $v->value = $dictionary;
         $v->stream = (string) $stream;
 
@@ -114,7 +115,7 @@ class PdfStream extends PdfType
     /**
      * The stream reader instance.
      *
-     * @var StreamReader|null
+     * @var StreamReader
      */
     protected $reader;
 

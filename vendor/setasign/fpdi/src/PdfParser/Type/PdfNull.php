@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser\Type;
 
 /**
  * Class representing a PDF null object
+ *
+ * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfNull extends PdfType
 {

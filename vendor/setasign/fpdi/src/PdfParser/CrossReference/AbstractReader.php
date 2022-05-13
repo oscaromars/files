@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -17,6 +16,8 @@ use setasign\Fpdi\PdfParser\Type\PdfTypeException;
 
 /**
  * Abstract class for cross-reference reader classes.
+ *
+ * @package setasign\Fpdi\PdfParser\CrossReference
  */
 abstract class AbstractReader
 {

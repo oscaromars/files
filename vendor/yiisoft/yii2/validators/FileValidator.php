@@ -11,7 +11,6 @@ use Yii;
 use yii\helpers\FileHelper;
 use yii\helpers\Html;
 use yii\helpers\Json;
-use yii\helpers\StringHelper;
 use yii\web\JsExpression;
 use yii\web\UploadedFile;
 
@@ -20,7 +19,7 @@ use yii\web\UploadedFile;
  *
  * Note that you should enable `fileinfo` PHP extension.
  *
- * @property-read int $sizeLimit The size limit for uploaded files. This property is read-only.
+ * @property int $sizeLimit The size limit for uploaded files. This property is read-only.
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
@@ -413,12 +412,7 @@ class FileValidator extends Validator
             }
         }
 
-        if (!empty($this->extensions)) {
-            foreach ((array) $this->extensions as $ext) {
-                if ($extension === $ext || StringHelper::endsWith($file->name, ".$ext", false)) {
-                    return true;
-                }
-            }
+        if (!in_array($extension, $this->extensions, true)) {
             return false;
         }
 

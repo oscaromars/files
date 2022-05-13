@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -16,6 +15,8 @@ use setasign\Fpdi\PdfParser\Tokenizer;
 
 /**
  * Class representing a PDF dictionary object
+ *
+ * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfDictionary extends PdfType
 {
@@ -78,7 +79,7 @@ class PdfDictionary extends PdfType
             $entries[$key->value] = $value;
         }
 
-        $v = new self();
+        $v = new self;
         $v->value = $entries;
 
         return $v;
@@ -92,7 +93,7 @@ class PdfDictionary extends PdfType
      */
     public static function create(array $entries = [])
     {
-        $v = new self();
+        $v = new self;
         $v->value = $entries;
 
         return $v;
@@ -103,7 +104,7 @@ class PdfDictionary extends PdfType
      *
      * @param mixed $dictionary
      * @param string $key
-     * @param PdfType|null $default
+     * @param PdfType|mixed|null $default
      * @return PdfNull|PdfType
      * @throws PdfTypeException
      */

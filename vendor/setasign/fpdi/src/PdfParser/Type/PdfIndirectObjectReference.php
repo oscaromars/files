@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser\Type;
 
 /**
  * Class representing an indirect object reference
+ *
+ * @package setasign\Fpdi\PdfParser\Type
  */
 class PdfIndirectObjectReference extends PdfType
 {
@@ -24,7 +25,7 @@ class PdfIndirectObjectReference extends PdfType
      */
     public static function create($objectNumber, $generationNumber)
     {
-        $v = new self();
+        $v = new self;
         $v->value = (int) $objectNumber;
         $v->generationNumber = (int) $generationNumber;
 

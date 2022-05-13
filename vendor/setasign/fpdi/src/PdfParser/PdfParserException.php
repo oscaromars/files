@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -14,6 +13,8 @@ use setasign\Fpdi\FpdiException;
 
 /**
  * Exception for the pdf parser class
+ *
+ * @package setasign\Fpdi\PdfParser
  */
 class PdfParserException extends FpdiException
 {

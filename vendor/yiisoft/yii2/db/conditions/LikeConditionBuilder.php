@@ -66,9 +66,7 @@ class LikeConditionBuilder implements ExpressionBuilderInterface
             return $not ? '' : '0=1';
         }
 
-        if ($column instanceof ExpressionInterface) {
-            $column = $this->queryBuilder->buildExpression($column, $params);
-        } elseif (is_string($column) && strpos($column, '(') === false) {
+        if (strpos($column, '(') === false) {
             $column = $this->queryBuilder->db->quoteColumnName($column);
         }
 

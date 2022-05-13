@@ -1,5 +1,4 @@
 <?php
-
 /**
  * This file is part of FPDI
  *
@@ -12,6 +11,8 @@ namespace setasign\Fpdi\PdfParser\Filter;
 
 /**
  * Class for handling LZW encoded data
+ *
+ * @package setasign\Fpdi\PdfParser\Filter
  */
 class Lzw implements FilterInterface
 {
@@ -102,6 +103,7 @@ class Lzw implements FilterInterface
 
                 $uncompData .= $this->sTable[$code];
                 $oldCode = $code;
+
             } else {
                 if ($code < $this->tIdx) {
                     $string = $this->sTable[$code];
